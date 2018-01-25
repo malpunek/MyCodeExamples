@@ -81,10 +81,10 @@ namespace _type_check {
 }
 
 
-template<typename T, typename std::enable_if<_type_check::is_a_good_type<T>::value, T>::type = 0>
+template<typename T, T neutral_value = 0, typename std::enable_if<_type_check::is_a_good_type<T>::value, T>::type = 0>
 class MySet{
 private:
-	static const int _ZERO = 0;
+	static const T _ZERO = neutral_value;
 	
 	struct node{
 		using node_ptr = std::shared_ptr<node>;
