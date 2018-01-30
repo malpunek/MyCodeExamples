@@ -2,6 +2,8 @@
 //
 //Implementation of Ukkonen's algorithm for online linear construction of suffix trees
 //
+//License: WTF
+//
 //Assuming input is a word over alphabet (a.....z)
 
 using namespace std;
