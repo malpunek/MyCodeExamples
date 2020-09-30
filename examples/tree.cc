@@ -1,7 +1,7 @@
 #include <bits/stdint-intn.h>
 #include <iostream>
 
-#include "libalgo/IntervalTree.hh"
+#include "libalgo/interval_tree.hh"
 
 int main() {
     auto x = libalgo::IntervalTree<int64_t, int>(0, (1ll<<60));

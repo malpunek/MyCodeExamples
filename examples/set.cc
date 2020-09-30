@@ -1,7 +1,7 @@
 #include <cstdio>
 #include <vector>
 
-#include "libalgo/SetOnSplayTree.hh"
+#include "libalgo/set.hh"
 
 int main(){
 	int n;
