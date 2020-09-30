@@ -54,12 +54,14 @@ namespace libalgo {
 
 template <
     typename IND_T, typename VAL_T = IND_T,
+    // TODO Relax assumptions on the types
     VAL_T (*GET_VAL_LOWEST)() = std::numeric_limits<VAL_T>::lowest,
     typename std::enable_if<std::is_arithmetic<IND_T>::value, int>::type = 0,
     typename std::enable_if<std::is_arithmetic<VAL_T>::value, int>::type = 0>
 class IntervalTree {
 
 private:
+  // TODO Perhaps this should be done differently
   inline static const VAL_T kLowestVal = GET_VAL_LOWEST();
 
   VAL_T value = {};
