@@ -1,19 +1,24 @@
-// Created by Stanislaw Morawski
-// Set implemented on Splay Tree
-//
-// Apart from standard operations this implementation lets you perform operation
-// shift(int x, int value) in amortized O(log n) time, where n is the size of
-// the structure. Operation shift(x, value) works assuming that value >= 0. It
-// adds value to all elements greater or equal than x.
-//
-// Other operations are:
-// insert(x) - inserting x into structure if it wasn't there
-// erase(x) - erasing x from the structure if it was there
-// find(x) - returns true if x is in the structure, false otherwise
-// sortedValues - returns vector<int> containing all values from the structure
-//
-// insert, erase and find are all working in amortized O(log n) time,
-// while sortedValues works lineary
+/*
+Set implemented on Splay Tree
+Created by Stanislaw Morawski
+
+Apart from standard operations this implementation lets you perform operation
+shift(int x, int value) in amortized O(log n) time, where n is the size of
+the structure. Operation shift(x, value) works assuming that value >= 0. It
+adds value to all elements greater or equal than x.
+
+Other operations are:
+insert(x) - inserting x into structure if it wasn't there
+erase(x) - erasing x from the structure if it was there
+find(x) - returns true if x is in the structure, false otherwise
+sortedValues - returns vector<int> containing all values from the structure
+
+insert, erase and find are all working in amortized O(log n) time,
+while sortedValues works lineary
+*/
+
+#ifndef LIBALGO_SET
+#define LIBALGO_SET
 
 #include <cassert>
 #include <cstdio>
@@ -23,71 +28,34 @@
 #include <utility>
 #include <vector>
 
+#include "libalgo/type_check.hh"
+
 namespace _type_check {
-
-template <typename O, typename T> class CheckForOperator {
-
-  template <typename Op, typename TT>
-  static auto test(int)
-      -> decltype(std::declval<Op>()(std::declval<TT>(), std::declval<TT>()),
-                  std::true_type());
-
-  template <typename, typename> static auto test(...) -> std::false_type;
-
-public:
-  using type = decltype(test<O, T>(0));
-};
-
-template <bool A, typename... Ts> class AndHelper {
-  constexpr static bool value = false;
-};
-
-template <typename... Ts> class AndHelper<false, Ts...> {
-public:
-  constexpr static bool value = false;
-};
-
-template <typename T, typename... Ts> class AndHelper<true, T, Ts...> {
-public:
-  constexpr static bool value = AndHelper<T::value, Ts...>::value;
-};
-
-template <> class AndHelper<true> {
-public:
-  constexpr static bool value = true;
-};
-
-template <typename T, typename... Ts> class AND {
-public:
-  constexpr static bool value = AndHelper<T::value, Ts...>::value;
-};
 
 template <typename T> class is_a_good_type {
 public:
   constexpr static bool value =
-      AND<typename std::is_assignable<T &, T>,
-          typename CheckForOperator<std::equal_to<>, T>::type,
-          typename CheckForOperator<std::plus<>, T>::type,
-          typename CheckForOperator<std::minus<>, T>::type>::value;
+      std::conjunction<typename std::is_assignable<T &, T>,
+                       typename HasOperator<std::equal_to<>, T>::type,
+                       typename HasOperator<std::plus<>, T>::type>::value;
 };
 
 } // namespace _type_check
 
-template <
-    typename T, T neutral_value = 0,
-    typename std::enable_if<_type_check::is_a_good_type<T>::value, T>::type = 0>
-class MySet {
-private:
-  static const T _ZERO = neutral_value;
+namespace libalgo {
 
+template <typename T, typename std::enable_if<
+                          _type_check::is_a_good_type<T>::value, T>::type = 0>
+class SplaySet {
+private:
   struct node {
     using node_ptr = std::shared_ptr<node>;
     T key;
     T left_shift_value, right_shift_value;
     node_ptr ls, rs, parent;
     node(T value) : key(value), ls(nullptr), rs(nullptr), parent(nullptr) {
-      left_shift_value = (T)_ZERO;
-      right_shift_value = (T)_ZERO;
+      left_shift_value = {};
+      right_shift_value = {};
     };
   };
 
@@ -103,14 +71,14 @@ private:
         x->left_shift_value += x->parent->left_shift_value;
       if (x->rs)
         x->right_shift_value += x->parent->left_shift_value;
-      x->parent->left_shift_value = (T)_ZERO;
+      x->parent->left_shift_value = {};
     } else {
       x->key += x->parent->right_shift_value;
       if (x->ls)
         x->left_shift_value += x->parent->right_shift_value;
       if (x->rs)
         x->right_shift_value += x->parent->right_shift_value;
-      x->parent->right_shift_value = (T)_ZERO;
+      x->parent->right_shift_value = {};
     }
   }
 
@@ -123,7 +91,7 @@ private:
       x->rs = x_parent;
       // set correct shifting_values on new edges
       x_parent->left_shift_value = x->right_shift_value;
-      x->right_shift_value = (T)_ZERO;
+      x->right_shift_value = {};
     } else {
       // rotate pointers
       x_parent->rs = x->ls;
@@ -132,7 +100,7 @@ private:
       x->ls = x_parent;
       // set correct shifting_values on new edges
       x_parent->right_shift_value = x->left_shift_value;
-      x->left_shift_value = (T)_ZERO;
+      x->left_shift_value = {};
     }
     x_parent->parent = x;
   }
@@ -198,7 +166,7 @@ private:
   }
 
 public:
-  MySet(){};
+  SplaySet(){};
 
   bool find(T value) {
     if (!_root)
@@ -224,7 +192,7 @@ public:
       if (new_node->rs)
         new_node->rs->parent = new_node;
       new_node->right_shift_value = _root->right_shift_value;
-      _root->right_shift_value = (T)_ZERO;
+      _root->right_shift_value = {};
     } else {
       new_node->rs = _root;
       new_node->ls = _root->ls;
@@ -232,7 +200,7 @@ public:
       if (new_node->ls)
         new_node->ls->parent = new_node;
       new_node->left_shift_value = _root->left_shift_value;
-      _root->left_shift_value = (T)_ZERO;
+      _root->left_shift_value = {};
     }
     _root->parent = new_node;
     _root = new_node;
@@ -250,7 +218,7 @@ public:
 
   std::vector<T> sortedValues() {
     std::vector<T> V;
-    dfs(_root, (T)_ZERO, V);
+    dfs(_root, {}, V);
     return V;
   }
 
@@ -280,3 +248,7 @@ public:
     }
   }
 };
+
+} // namespace libalgo
+
+#endif // LIBALGO_SET
