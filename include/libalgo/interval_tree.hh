@@ -162,4 +162,4 @@ public:
 
 } // namespace libalgo
 
-#endif
+#endif // LIBALGO_INTERVAL_TREE
