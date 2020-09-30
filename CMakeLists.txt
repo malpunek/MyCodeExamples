@@ -2,9 +2,8 @@ cmake_minimum_required(VERSION 3.10)
 project(libalgo VERSION 1.0.0 LANGUAGES CXX)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON) 
 
-list(APPEND SRCS src/IntervalTree.cpp)
 # list(APPEND SRCS src/SetOnSplayTree.cpp)
-# list(APPEND SRCS src/UkkonensAlgorithm.cpp)
+list(APPEND SRCS src/UkkonensAlgorithm.cpp)
 
 add_library(libalgo ${SRCS})
 add_library(malpunek::libalgo ALIAS libalgo)
@@ -23,4 +22,4 @@ target_compile_features(libalgo PRIVATE cxx_std_17)
 
 # TODO
 # add_subdirectory(tests)
-# add_subdirectory(examples)
+add_subdirectory(examples)
