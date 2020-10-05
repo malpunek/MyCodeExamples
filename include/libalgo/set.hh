@@ -37,7 +37,8 @@ public:
   constexpr static bool value =
       std::conjunction<typename std::is_assignable<T &, T>,
                        typename HasOperator<std::equal_to<>, T>::type,
-                       typename HasOperator<std::plus<>, T>::type>::value;
+                       typename HasOperator<std::plus<>, T>::type,
+                       typename HasOperator<std::greater<>, T>::type>::value;
 };
 
 } // namespace _type_check
