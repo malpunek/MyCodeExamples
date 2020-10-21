@@ -1,6 +1,7 @@
 #include <algorithm>
 #include <iostream>
 #include <libalgo/suffix_tree.hh>
+#include <string>
 
 class X {
 private:
@@ -15,20 +16,20 @@ public:
 };
 
 int main() {
-  // char z = (char) X('z');
-  // std::cout << z << std::endl;
-  std::string x("Ala");
-  std::vector<char> y{'B', 'a', 's', 'i', 'a'};
-  std::vector<int> z{'B', 'a', 's', 'i', 'a'};
-  std::vector<X> q{X('M'), X('a'), X('l'), X('g'),
-                   X('o'), X('s'), X('i'), X('a')};
-  std::vector<char> p(std::begin(q), std::end(q));
-  libalgo::SuffixTree buf('$', x, y, z, q);
-  libalgo::SuffixTree suf('$', std::move(x), std::move(y));
-  std::for_each(suf.the_string.cbegin(), suf.the_string.cend(),
-                [](auto pt) { std::cout << pt << std::endl; });
-  std::cout << std::endl << std::endl;
-  std::for_each(buf.the_string.cbegin(), buf.the_string.cend(),
-                [](auto pt) { std::cout << pt << std::endl; });
+  int n;
+  std::cin >> n;
+  while (n--) {
+    std::string s;
+    std::cin >> s;
+    libalgo::SuffixTree st(s);
+    size_t queries;
+    std::cin >> queries;
+    std::string y = "TAK\n", n = "NIE\n";
+    while (queries--) {
+      std::string query;
+      std::cin >> query;
+      std::cout << (st.find(query) ? y : n);
+    }
+  }
   return 0;
 }
