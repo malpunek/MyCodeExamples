@@ -1,3 +1,5 @@
 build
 exp
 .clangd
+.venv
+.cache
